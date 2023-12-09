@@ -1,6 +1,6 @@
 [project]
 name = "lambda-lite"
-version = "0.0.1"
+version = "0.0.3"
 authors = [
   { name="Michael LePera", email="lepmt001@mymail.unisa.edu.au" },
 ]

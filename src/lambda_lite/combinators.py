@@ -1,5 +1,5 @@
 from typing import Callable
-
+from .typedefs import *
 
 def compose[**A, **B, C](
         f: ParametricFunction[B, C], 
@@ -35,3 +35,15 @@ def s[A, B, C](f: Callable[[A, B], C], g: Callable[[A], B]) -> C:
     def inner(x: A) -> C:
         return f(x, g(x))
     return inner
+
+
+
+__all__ = [
+    "compose", 
+    "flip", 
+    "identity", 
+    "join", 
+    "s"
+]
+
+
