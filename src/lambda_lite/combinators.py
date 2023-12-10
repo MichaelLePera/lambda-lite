@@ -1,21 +1,18 @@
-from typing import Callable
 from typing import TypeVar
 from typing import ParamSpec
 
-from .typedefs import *
-
+from lambda_lite.typedefs import MonadicFunction
+from lambda_lite.typedefs import DyadicFunction
+from lambda_lite.typedefs import VariadicFunction
 
 _A = TypeVar("_A")
 _B = TypeVar("_B")
 _C = TypeVar("_C")
 _D = TypeVar("_D")
-_P = ParamSpec("_P") 
+_P = ParamSpec("_P")
 
 
-def compose(
-        f: MonadicFunction[_B, _C], 
-        g: VariadicFunction[_P, _B]
-    ) -> VariadicFunction[_P, _C]:
+def compose(f: MonadicFunction[_B, _C], g: VariadicFunction[_P, _B]) -> VariadicFunction[_P, _C]:
     def h(*args: _P.args, **kwargs: _P.kwargs) -> _C:
         if args or kwargs:
             return f(g(*args, **kwargs))
@@ -64,11 +61,10 @@ def s(f: DyadicFunction[_A, _B, _C], g: MonadicFunction[_A, _B]) -> MonadicFunct
 
 
 def on_(
-        f: DyadicFunction[_B, _B, _C], 
-        g: MonadicFunction[_A, _B], 
-        a: _A, 
-        b: _A
-    ) -> _C:
+        f: DyadicFunction[_B, _B, _C],
+        g: MonadicFunction[_A, _B],
+        a: _A,
+        b: _A) -> _C:
     """psi combinator"""
     return f(g(a), g(b))
 
@@ -88,4 +84,3 @@ def blackbird_(f: MonadicFunction[_C, _D], g: DyadicFunction[_A, _B, _C], a: _A,
 
 
 __all__ = ["compose", "flip_", "id_", "join_", "s"]
-
