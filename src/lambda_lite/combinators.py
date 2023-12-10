@@ -1,10 +1,22 @@
 from typing import Callable
+from typing import TypeVar
+from typing import ParamSpec
 
 from .typedefs import *
 
 
-def compose[**A, **B, C](f: ParametricFunction[B, C], g: ParametricFunction[A, B]) -> ParametricFunction[A, C]:
-    def h(*args: A.args, **kwargs: A.kwargs) -> C:
+_A = TypeVar("_A")
+_B = TypeVar("_B")
+_C = TypeVar("_C")
+_D = TypeVar("_D")
+_P = ParamSpec("_P") 
+
+
+def compose(
+        f: MonadicFunction[_B, _C], 
+        g: VariadicFunction[_P, _B]
+    ) -> VariadicFunction[_P, _C]:
+    def h(*args: _P.args, **kwargs: _P.kwargs) -> _C:
         if args or kwargs:
             return f(g(*args, **kwargs))
         return f(g())
@@ -12,14 +24,14 @@ def compose[**A, **B, C](f: ParametricFunction[B, C], g: ParametricFunction[A, B
     return h
 
 
-def flip_[A, B, C](f: Callable[[A, B], C]) -> Callable[[B, A], C]:
-    def flipped(b: B, a: A) -> C:
+def flip_(f: DyadicFunction[_A, _B, _C]) -> DyadicFunction[_B, _A, _C]:
+    def flipped(b: _B, a: _A) -> _C:
         return f(a, b)
 
     return flipped
 
 
-def id_[A](x: A) -> A:
+def id_(x: _A) -> _A:
     """Identity combinator.
 
     λa.a
@@ -28,7 +40,7 @@ def id_[A](x: A) -> A:
     return x
 
 
-def const_[A, B](a: A, b: B) -> A:
+def const_(a: _A, b: _B) -> _A:
     """K combinator.
 
     λab.a
@@ -37,41 +49,43 @@ def const_[A, B](a: A, b: B) -> A:
     return a
 
 
-def join_[A, B](f: Callable[[A, A], B]) -> Callable[[A], B]:
-    def inner(a: A) -> B:
+def join_(f: DyadicFunction[_A, _A, _B]) -> MonadicFunction[_A, _B]:
+    def inner(a: _A) -> _B:
         return f(a, a)
 
     return inner
 
 
-def s[A, B, C](f: Callable[[A, B], C], g: Callable[[A], B]) -> C:
-    def inner(x: A) -> C:
+def s(f: DyadicFunction[_A, _B, _C], g: MonadicFunction[_A, _B]) -> MonadicFunction[_A, _C]:
+    def inner(x: _A) -> _C:
         return f(x, g(x))
 
     return inner
 
 
-def on_[A, B, C](f: Callable[[B, B], C], g: Callable[[A], B], a: A, b: A) -> C:
+def on_(
+        f: DyadicFunction[_B, _B, _C], 
+        g: MonadicFunction[_A, _B], 
+        a: _A, 
+        b: _A
+    ) -> _C:
     """psi combinator"""
     return f(g(a), g(b))
 
 
-def applicator[A, B](f: Callable[[A], B], a: A) -> B:
+def applicator(f: MonadicFunction[_A, _B], a: _A) -> _B:
     """i-star combinator"""
     return f(a)
 
 
-def becard_[
-    A, B, C, D
-](f: Callable[[C], D], g: Callable[[B], C], h: Callable[[A], B], a: A) -> D:
+def becard_(f: MonadicFunction[_C, _D], g: MonadicFunction[_B, _C], h: MonadicFunction[_A, _B], a: _A) -> _D:
     """B3 combinator"""
     return f(g(h(a)))
 
 
-def blackbird_[
-    A, B, C, D
-](f: Callable[[C], D], g: Callable[[A, B], C], a: A, b: B) -> D:
+def blackbird_(f: MonadicFunction[_C, _D], g: DyadicFunction[_A, _B, _C], a: _A, b: _B) -> _D:
     return f(g(a, b))
 
 
 __all__ = ["compose", "flip_", "id_", "join_", "s"]
+

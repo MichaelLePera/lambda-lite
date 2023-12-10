@@ -1,12 +1,22 @@
 from typing import Callable
+from typing import TypeVar
+from typing import ParamSpec
+from typing import TypeAlias
 
-type NiladicFunction[B] = Callable[[], B]
-type MonadicFunction[A, B] = Callable[[A], B]
-type DyadicFunction[A, B, C] = Callable[[A, B], C]
-type ParametricFunction[**P, B] = Callable[P, B]
-type Predicate = Callable[..., bool]
-type VariadicFunction[B] = Callable[..., B]
 
+_A = TypeVar("_A")
+_B = TypeVar("_B")
+_C = TypeVar("_C")
+_D = TypeVar("_D")
+_P = ParamSpec("_P") 
+
+
+NiladicFunction: TypeAlias = Callable[[], _B]
+MonadicFunction: TypeAlias = Callable[[_A], _B]
+DyadicFunction: TypeAlias = Callable[[_A, _B], _C]
+ParametricFunction: TypeAlias = Callable[_P, _B]
+Predicate: TypeAlias = Callable[..., bool]
+VariadicFunction: TypeAlias = Callable[_P, _B]
 
 __all__ = [
     "NiladicFunction",
